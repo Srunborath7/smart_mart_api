@@ -56,7 +56,7 @@ app.use('/api/chat', chatRoutes);
 app.get('/', (req, res) => {
   res.json({
     success: true,
-    message: 'Food Delivery API Running'
+    message: 'Smart Mart API Running'
   });
 });
 
