@@ -2,8 +2,7 @@ const authService = require('../services/authService');
 const { generateAccessToken, generateRefreshToken } = require('../utils/jwt');
 const { successResponse, errorResponse } = require('../utils/response');
 const jwt = require('jsonwebtoken');
-const sendTelegramMessage = require('../utils/telegram');
-
+const { sendTelegramMessageLogin } = require('../utils/telegram');
 const register = async (req, res) => {
     try {
 
