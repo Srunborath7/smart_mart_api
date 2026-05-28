@@ -15,19 +15,19 @@ const store = async (data, io) => {
     });
 
     await sendTelegramMessage(
-        `🧾 [INCOMING MESSAGE]
-
-        ┌────────────────────
-        │ 👤 Name : ${data.sender_name}
-        │ 🛡 Role : ${data.sender_role}
-        ├────────────────────
-        │ 💬 Content:
-        │ ${data.message}
-        ├────────────────────
-        │ 🕒 ${new Date().toLocaleString()}
-        └────────────────────`
-        );
-
+        `🚨 SMART MART NOTIFICATION
+    ━━━━━━━━━━━━━━━━━━━━
+    👤 USER
+    Name : ${data.sender_name}
+    Role : ${data.sender_role}
+    ━━━━━━━━━━━━━━━━━━━━
+    💬 MESSAGE CONTENT
+    "${data.message}"
+    ━━━━━━━━━━━━━━━━━━━━
+    🕒 TIME
+    ${new Date().toLocaleString()}
+    `
+    );
     if (io) {
         io.to(data.room_id).emit('receiveMessage', message);
     }
