@@ -3,8 +3,8 @@ const { generateAccessToken, generateRefreshToken } = require('../utils/jwt');
 const { successResponse, errorResponse } = require('../utils/response');
 const jwt = require('jsonwebtoken');
 const sendTelegramMessage = require('../utils/telegram');
-const register = async (req, res) => {
 
+const register = async (req, res) => {
     try {
 
         const { name, email, password, role } = req.body;
@@ -15,17 +15,15 @@ const register = async (req, res) => {
 
         const user = await authService.registerUser(name, email, password, role);
 
-        const safeUser = {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            role: user.role
-        };
-
         return res.status(201).json({
             success: true,
             message: "Register success",
-            user: safeUser
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
         });
 
     } catch (error) {
@@ -35,26 +33,34 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
     try {
+
         const { email, password, rememberMe } = req.body;
+
         if (!email || !password) {
             return errorResponse(res, "Email and password required");
         }
-        const user = await authService.loginUser(email, password);
-        const token = generateAccessToken(user);
-        const refreshToken = generateRefreshToken(user, rememberMe);
 
+        const user = await authService.loginUser(email, password);
+
+        const accessToken = generateAccessToken(user);
+        const refreshToken = generateRefreshToken(user, rememberMe);
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            maxAge: 30 * 24 * 60 * 60 * 1000
+            secure: true,
+            sameSite: 'none',
+            maxAge: rememberMe
+                ? 30 * 24 * 60 * 60 * 1000
+                : 7 * 24 * 60 * 60 * 1000
         });
+
         const safeUser = {
             id: user.id,
             name: user.name,
             email: user.email,
             role: user.role
         };
+
+        // Telegram log (optional)
         const loginTime = new Date().toLocaleString('en-US', {
             timeZone: 'Asia/Phnom_Penh',
             year: 'numeric',
@@ -65,40 +71,39 @@ const login = async (req, res) => {
             second: '2-digit'
         });
 
-        await sendTelegramMessage(
-        `🔥 LOGIN ALERT
+        await sendTelegramMessage(`
+            🔥 LOGIN ALERT
 
-        👤 Name: ${user.name}
-        📧 Email: ${user.email}
-        🛡️ Role: ${user.role}
-        🕒 Time: ${loginTime}
-        `
-        );
+            👤 Name: ${user.name}
+            📧 Email: ${user.email}
+            🛡️ Role: ${user.role}
+            🕒 Time: ${loginTime}
+        `);
+
         return successResponse(res, "Login success", {
-            token,
+            token: accessToken,
             user: safeUser
         });
+
     } catch (error) {
         return errorResponse(res, error.message);
     }
 };
-const getMe = async (req, res) => {
 
+const getMe = async (req, res) => {
     try {
 
         const userId = req.user.id;
-
         const user = await authService.getMe(userId);
 
         return successResponse(res, "User profile fetched", user);
 
     } catch (error) {
-
         return errorResponse(res, error.message);
     }
 };
-const getAllUsers = async (req, res) => {
 
+const getAllUsers = async (req, res) => {
     try {
 
         const users = await authService.getUsers();
@@ -106,15 +111,13 @@ const getAllUsers = async (req, res) => {
         return successResponse(res, "Users fetched successfully", users);
 
     } catch (error) {
-
         return errorResponse(res, error.message);
     }
 };
-const refreshToken = async (req, res) => {
 
+const refreshToken = async (req, res) => {
     try {
 
-        // get refresh token from cookie
         const token = req.cookies.refreshToken;
 
         if (!token) {
@@ -124,57 +127,37 @@ const refreshToken = async (req, res) => {
             });
         }
 
-        // verify refresh token
-        jwt.verify(
+        const decoded = jwt.verify(
             token,
-            process.env.JWT_REFRESH_SECRET,
-            async (err, decoded) => {
-
-                if (err) {
-                    return res.status(403).json({
-                        success: false,
-                        message: 'Invalid refresh token'
-                    });
-                }
-
-                // create new access token
-                const accessToken = jwt.sign(
-                    {
-                        id: decoded.id
-                    },
-                    process.env.JWT_SECRET,
-                    {
-                        expiresIn: '15m'
-                    }
-                );
-
-                return res.json({
-                    success: true,
-                    accessToken
-                });
-
-            }
+            process.env.JWT_REFRESH_SECRET
         );
 
-    } catch (error) {
+        const newAccessToken = jwt.sign(
+            { id: decoded.id },
+            process.env.JWT_SECRET,
+            { expiresIn: '15m' }
+        );
 
-        return res.status(500).json({
-            success: false,
-            message: error.message
+        return res.json({
+            success: true,
+            accessToken: newAccessToken
         });
 
+    } catch (error) {
+        return res.status(403).json({
+            success: false,
+            message: 'Invalid refresh token'
+        });
     }
-
 };
-const logout = async (req, res) => {
 
+const logout = async (req, res) => {
     try {
 
-        // clear refresh token cookie
         res.clearCookie('refreshToken', {
             httpOnly: true,
-            secure: false,
-            sameSite: 'strict'
+            secure: true,
+            sameSite: 'none'
         });
 
         return res.json({
@@ -183,15 +166,13 @@ const logout = async (req, res) => {
         });
 
     } catch (error) {
-
         return res.status(500).json({
             success: false,
             message: error.message
         });
-
     }
-
 };
+
 module.exports = {
     register,
     login,
