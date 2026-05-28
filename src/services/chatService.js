@@ -1,5 +1,5 @@
 const Message = require('../models/message');
-const sendTelegramMessage = require('../utils/telegram');
+const { sendTelegramMessage } = require('../utils/telegram');
 
 const store = async (data, io) => {
 
