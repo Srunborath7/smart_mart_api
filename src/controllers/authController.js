@@ -52,7 +52,7 @@ const login = async (req, res) => {
                 ? 30 * 24 * 60 * 60 * 1000
                 : 7 * 24 * 60 * 60 * 1000
         });
-
+        
         const safeUser = {
             id: user.id,
             name: user.name,
