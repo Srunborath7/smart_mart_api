@@ -14,7 +14,11 @@ const chatRoutes = require('./routes/chatRoutes');
 const app = express();
 
 app.use(cors({
-  origin: '*',
+  origin: [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'https://heroic-llama-604777.netlify.app'
+  ],
   credentials: true
 }));
 
