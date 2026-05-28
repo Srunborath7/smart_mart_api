@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-async function sendTelegramMessage(message) {
+async function sendTelegramMessageLogin(message) {
 
     const token = process.env.TELEGRAM_BOT_TOKEN;
     const chatId = process.env.TELEGRAM_CHAT_ID;
@@ -12,5 +12,16 @@ async function sendTelegramMessage(message) {
         text: message
     });
 }
+async function sendTelegramMessage(message) {
 
-module.exports = sendTelegramMessage;
+    const token = process.env.TELEGRAM_MESSAGE_BOT_TOKEN;
+    const chatId = process.env.TELEGRAM_CHAT_MESSAGE_ID;
+
+    const url = `https://api.telegram.org/bot${token}/sendMessage`;
+
+    await axios.post(url, {
+        chat_id: chatId,
+        text: message
+    });
+}
+module.exports = { sendTelegramMessageLogin, sendTelegramMessage };

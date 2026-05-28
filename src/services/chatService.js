@@ -1,9 +1,6 @@
 const Message = require('../models/message');
 const sendTelegramMessage = require('../utils/telegram');
 
-// =============================
-// CREATE MESSAGE
-// =============================
 const store = async (data, io) => {
 
     if (!data.room_id || !data.sender_name || !data.sender_role || !data.message) {
@@ -17,16 +14,20 @@ const store = async (data, io) => {
         message: data.message
     });
 
-    // =============================
-    // TELEGRAM NOTIFICATION
-    // =============================
     await sendTelegramMessage(
-        `💬 NEW MESSAGE\n\n👤 ${data.sender_name}\n🛡 ${data.sender_role}\n\n💬 ${data.message}\n🕒 ${new Date().toLocaleString()}`
-    );
+        `🧾 [INCOMING MESSAGE]
 
-    // =============================
-    // SOCKET BROADCAST
-    // =============================
+        ┌────────────────────
+        │ 👤 Name : ${data.sender_name}
+        │ 🛡 Role : ${data.sender_role}
+        ├────────────────────
+        │ 💬 Content:
+        │ ${data.message}
+        ├────────────────────
+        │ 🕒 ${new Date().toLocaleString()}
+        └────────────────────`
+        );
+
     if (io) {
         io.to(data.room_id).emit('receiveMessage', message);
     }
@@ -34,9 +35,6 @@ const store = async (data, io) => {
     return message;
 };
 
-// =============================
-// GET ALL MESSAGES
-// =============================
 const index = async () => {
 
     const messages = await Message.findAll({
@@ -46,9 +44,6 @@ const index = async () => {
     return messages;
 };
 
-// =============================
-// GET BY ROOM
-// =============================
 const getByRoom = async (room_id) => {
 
     if (!room_id) {

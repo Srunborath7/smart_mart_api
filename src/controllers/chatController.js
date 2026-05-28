@@ -1,8 +1,4 @@
 const chatService = require('../services/chatService');
-
-// =============================
-// SEND MESSAGE (REST API)
-// =============================
 const store = async (req, res) => {
 
     try {
@@ -30,10 +26,6 @@ const store = async (req, res) => {
         });
     }
 };
-
-// =============================
-// GET ALL MESSAGES
-// =============================
 const index = async (req, res) => {
 
     try {
@@ -54,9 +46,6 @@ const index = async (req, res) => {
     }
 };
 
-// =============================
-// GET MESSAGES BY ROOM
-// =============================
 const getByRoom = async (req, res) => {
 
     try {

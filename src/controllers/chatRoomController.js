@@ -1,10 +1,5 @@
-// ==========================================
-// src/controllers/chatRoomController.js
-// ==========================================
-
 const chatRoomService = require('../services/chatRoomService');
 
-// GET ALL
 const index = async (req, res) => {
 
     try {
@@ -26,7 +21,6 @@ const index = async (req, res) => {
     }
 };
 
-// GET ONE
 const show = async (req, res) => {
 
     try {
@@ -50,7 +44,6 @@ const show = async (req, res) => {
     }
 };
 
-// CREATE
 const store = async (req, res) => {
 
     try {
@@ -79,7 +72,6 @@ const store = async (req, res) => {
     }
 };
 
-// UPDATE
 const update = async (req, res) => {
 
     try {
@@ -110,7 +102,6 @@ const update = async (req, res) => {
     }
 };
 
-// DELETE
 const destroy = async (req, res) => {
 
     try {

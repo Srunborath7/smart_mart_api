@@ -60,7 +60,6 @@ const login = async (req, res) => {
             role: user.role
         };
 
-        // Telegram log (optional)
         const loginTime = new Date().toLocaleString('en-US', {
             timeZone: 'Asia/Phnom_Penh',
             year: 'numeric',
@@ -71,15 +70,21 @@ const login = async (req, res) => {
             second: '2-digit'
         });
 
-        await sendTelegramMessage(`
-            🔥 LOGIN ALERT
+        await sendTelegramMessageLogin(
+            `🚨 *NEW LOGIN ALERT*
 
-            👤 Name: ${user.name}
-            📧 Email: ${user.email}
-            🛡️ Role: ${user.role}
-            🕒 Time: ${loginTime}
-        `);
+            ┌────────────────────
+            │ 👤 Name  : ${user.name}
+            │ 📧 Email : ${user.email}
+            │ 🛡 Role  : ${user.role}
+            ├────────────────────
+            │ 🕒 Time  : ${loginTime}
+            │ 🌐 Status: SUCCESS
+            └────────────────────
 
+            🔒 System: Authentication Service
+            `
+        );
         return successResponse(res, "Login success", {
             token: accessToken,
             user: safeUser
