@@ -35,7 +35,7 @@ const Brand = sequelize.define("Brand", {
 },{
     tableName: "brands",
     timestamps: true,
-    createdAt: "created-at",
-    updatedAt: "updated-at"
+    createdAt: "created_at",
+    updatedAt: "updated_at"
 });
 module.exports = Brand;
