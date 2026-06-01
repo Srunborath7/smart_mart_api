@@ -1,9 +1,18 @@
 const Brand = require("../models/brand");
-
+const User = require("../models/user");
 // GET ALL
 async function index() {
 
-    return await Brand.findAll();
+    return await Brand.findAll({
+        include: [
+            {
+                model:User,
+                as : "user",
+                attributes: ['id', 'name']
+            }
+        ],
+        order: [['created_at', 'DESC']]
+    });
 
 }
 

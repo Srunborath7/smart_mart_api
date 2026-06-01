@@ -1,8 +1,17 @@
 const Category = require("../models/category");
-
+const User = require("../models/user");
 const index = async () => {
 
-    const categories = await Category.findAll();
+    const categories = await Category.findAll({
+        include: [
+            {
+                model: User,
+                as: "user",
+                attributes: ['id', 'name']
+            }
+        ],
+        order: [['created_at', 'DESC']]
+    });
 
     if (!categories) {
         throw new Error("Categories not found");

@@ -1,7 +1,7 @@
 const User = require('./user');
 const Category = require('./category');
 const Brand = require("./brand");
-// USER → CATEGORY (1 to many)
+
 User.hasMany(Category, {
     foreignKey: 'user_id',
     as: 'categories'
