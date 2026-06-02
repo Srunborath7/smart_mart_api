@@ -10,6 +10,18 @@ router.post(
     upload.single('logo'),authMiddleware, roleMiddleware('admin'),
     brandController.store
 );
+router.get("/:id", brandController.show);
+router.put(
+    "/:id",
+    upload.single('logo'),authMiddleware, roleMiddleware('admin'),
+    brandController.update
+);
+router.delete(
+    "/:id",
+    authMiddleware,
+    roleMiddleware('admin'),
+    brandController.destroy
+);
 router.get("/", brandController.index);
 
 

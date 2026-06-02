@@ -1,6 +1,6 @@
 const Brand = require("../models/brand");
 const User = require("../models/user");
-// GET ALL
+
 async function index() {
 
     return await Brand.findAll({
@@ -16,7 +16,6 @@ async function index() {
 
 }
 
-// CREATE
 async function store(data) {
 
     if (!data.name) {
@@ -35,7 +34,6 @@ async function store(data) {
     return brand;
 }
 
-// GET BY ID
 async function show(id) {
 
     const brand = await Brand.findByPk(id);
@@ -47,7 +45,6 @@ async function show(id) {
     return brand;
 }
 
-// UPDATE
 async function update(id, data) {
 
     const brand = await Brand.findByPk(id);
@@ -67,7 +64,6 @@ async function update(id, data) {
     return brand;
 }
 
-// DELETE
 async function destroy(id) {
 
     const brand = await Brand.findByPk(id);
@@ -75,7 +71,6 @@ async function destroy(id) {
     if (!brand) {
         throw new Error("Brand not found");
     }
-
     await brand.destroy();
 
     return true;

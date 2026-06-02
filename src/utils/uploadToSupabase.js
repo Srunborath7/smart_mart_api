@@ -28,5 +28,17 @@ async function uploadFile(file, folder = "brands") {
         url: publicUrl.publicUrl
     };
 }
+async function deleteFile(filePath) {
 
-module.exports = uploadFile;
+    const { error } = await supabase
+        .storage
+        .from('uploads')
+        .remove([filePath]);
+    if (error) {
+        throw new Error(error.message);
+    }
+}
+module.exports = {
+    uploadFile,
+    deleteFile
+};
